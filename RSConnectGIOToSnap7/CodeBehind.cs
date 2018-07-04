@@ -1,7 +1,7 @@
 ﻿/*=============================================================================|
-|  PROJECT RSConnectGIOToSnap7                                           1.0.0 |
+|  PROJECT RSConnectGIOToSnap7                                           1.0.1 |
 |==============================================================================|
-|  Copyright (C) 2016 Denis FRAIPONT                                           |
+|  Copyright (C) 2018 Denis FRAIPONT                                           |
 |  All rights reserved.                                                        |
 |==============================================================================|
 |  RSConnectGIOToSnap7 is free software: you can redistribute it and/or modify |
@@ -27,10 +27,7 @@
 |=============================================================================*/
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 
-using ABB.Robotics.Math;
 using ABB.Robotics.RobotStudio;
 using ABB.Robotics.RobotStudio.Stations;
 
@@ -351,6 +348,7 @@ namespace RSConnectGIOToSnap7
 		private void UpdateGICount(SmartComponent component, int oldCount)
 		{
 			int newGICount = (int)component.Properties["GI_ByteNumber"].Value;
+			component.Properties["GI_FirstByteAddress"].UIVisible = (newGICount > 0);
 			if (newGICount > oldCount)
 			{
 				for (int i = oldCount; i < newGICount; i++)
@@ -386,6 +384,7 @@ namespace RSConnectGIOToSnap7
 		private void UpdateGOCount(SmartComponent component, int oldCount)
 		{
 			int newGOCount = (int)component.Properties["GO_ByteNumber"].Value;
+			component.Properties["GO_FirstByteAddress"].UIVisible = (newGOCount > 0);
 			if (newGOCount > oldCount)
 			{
 				for (int i = oldCount; i < newGOCount; i++)
@@ -489,7 +488,7 @@ namespace RSConnectGIOToSnap7
 					return false;
 				item.Start = offset;
 			}
-			else if (strName.Substring(0, 1) == "A")
+			else if ((strName.Substring(0, 1) == "A") || (strName.Substring(0, 1) == "Q"))
 			{
 				item.Area = S7Consts.S7AreaPA;
 				if (strName.Length < 2) //Ax0 || A0.
@@ -501,7 +500,7 @@ namespace RSConnectGIOToSnap7
 					return false;
 				item.Start = offset;
 			}
-			else if (strName.Substring(0, 1) == "E")
+			else if ((strName.Substring(0, 1) == "E") || (strName.Substring(0, 1) == "I"))
 			{
 				item.Area = S7Consts.S7AreaPE;
 				if (strName.Length < 2) //Ex0 || E0.
